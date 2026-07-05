@@ -1,0 +1,330 @@
+{
+  "info": {
+    "name": "SEAPEDIA API",
+    "description": "Postman collection for the SEAPEDIA marketplace API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"demo_user\",\n  \"email\": \"demo@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"buyer1\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.token) {",
+                  "    pm.collectionVariables.set('token', json.token);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "Set Active Role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"Buyer\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/active-role",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "active-role"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Catalog",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/catalog/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["catalog", "products"]
+            }
+          }
+        },
+        {
+          "name": "Product Detail",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/catalog/products/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["catalog", "products", "1"]
+            }
+          }
+        },
+        {
+          "name": "Store Detail",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/catalog/stores/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["catalog", "stores", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Seller",
+      "item": [
+        {
+          "name": "Get Seller Store",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/seller/store",
+              "host": ["{{baseUrl}}"],
+              "path": ["seller", "store"]
+            }
+          }
+        },
+        {
+          "name": "List Seller Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/seller/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["seller", "products"]
+            }
+          }
+        },
+        {
+          "name": "List Seller Orders",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/seller/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["seller", "orders"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Buyer",
+      "item": [
+        {
+          "name": "Get Wallet",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/buyer/wallet",
+              "host": ["{{baseUrl}}"],
+              "path": ["buyer", "wallet"]
+            }
+          }
+        },
+        {
+          "name": "Top Up Wallet",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 100000\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/buyer/wallet/topup",
+              "host": ["{{baseUrl}}"],
+              "path": ["buyer", "wallet", "topup"]
+            }
+          }
+        },
+        {
+          "name": "Get Cart",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/buyer/cart",
+              "host": ["{{baseUrl}}"],
+              "path": ["buyer", "cart"]
+            }
+          }
+        },
+        {
+          "name": "Checkout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"delivery_method\": \"Instant\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/buyer/checkout",
+              "host": ["{{baseUrl}}"],
+              "path": ["buyer", "checkout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Driver",
+      "item": [
+        {
+          "name": "Available Jobs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/driver/jobs",
+              "host": ["{{baseUrl}}"],
+              "path": ["driver", "jobs"]
+            }
+          }
+        },
+        {
+          "name": "My Jobs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/driver/my-jobs",
+              "host": ["{{baseUrl}}"],
+              "path": ["driver", "my-jobs"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Monitoring",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/admin/monitoring",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "monitoring"]
+            }
+          }
+        },
+        {
+          "name": "Vouchers",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/admin/vouchers",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "vouchers"]
+            }
+          }
+        },
+        {
+          "name": "Promos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/admin/promos",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "promos"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

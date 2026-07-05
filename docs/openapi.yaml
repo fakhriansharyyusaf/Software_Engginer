@@ -1,0 +1,443 @@
+openapi: 3.0.3
+info:
+  title: SEAPEDIA API
+  version: 1.0.0
+  description: |
+    REST API for the SEAPEDIA multi-role marketplace.
+    Authentication uses Laravel Sanctum bearer tokens.
+servers:
+  - url: http://localhost:8000/api
+    description: Local development
+security:
+  - bearerAuth: []
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, email, password]
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Registration success
+
+  /auth/login:
+    post:
+      summary: Login and receive a Sanctum token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Login success
+
+  /auth/logout:
+    post:
+      summary: Revoke the current token
+      responses:
+        '200':
+          description: Logged out
+
+  /auth/me:
+    get:
+      summary: Get current user profile
+      responses:
+        '200':
+          description: Current authenticated user
+
+  /auth/active-role:
+    post:
+      summary: Set the active role for the authenticated user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [role]
+              properties:
+                role:
+                  type: string
+      responses:
+        '200':
+          description: Active role updated
+
+  /catalog/products:
+    get:
+      summary: List public products
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Paginated product list
+
+  /catalog/products/{product}:
+    get:
+      summary: Get product detail
+      parameters:
+        - in: path
+          name: product
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Product detail
+
+  /catalog/stores/{store}:
+    get:
+      summary: Get store detail
+      parameters:
+        - in: path
+          name: store
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Store detail
+
+  /seller/store:
+    get:
+      summary: Get own store
+      responses:
+        '200':
+          description: Seller store information
+    post:
+      summary: Create or update own store
+      responses:
+        '200':
+          description: Store saved
+
+  /seller/products:
+    get:
+      summary: List own products
+      responses:
+        '200':
+          description: Seller products
+    post:
+      summary: Create a product
+      responses:
+        '201':
+          description: Product created
+
+  /seller/products/{product}:
+    put:
+      summary: Update a product
+      parameters:
+        - in: path
+          name: product
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Product updated
+    delete:
+      summary: Delete a product
+      parameters:
+        - in: path
+          name: product
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Product deleted
+
+  /seller/orders:
+    get:
+      summary: List incoming orders for own store
+      responses:
+        '200':
+          description: Seller orders
+
+  /seller/orders/{order}/process:
+    post:
+      summary: Process an order to the next step
+      parameters:
+        - in: path
+          name: order
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Order processed
+
+  /buyer/wallet:
+    get:
+      summary: Get wallet balance and history
+      responses:
+        '200':
+          description: Wallet information
+
+  /buyer/wallet/topup:
+    post:
+      summary: Top up wallet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount]
+              properties:
+                amount:
+                  type: integer
+      responses:
+        '200':
+          description: Wallet topped up
+
+  /buyer/addresses:
+    get:
+      summary: List addresses
+      responses:
+        '200':
+          description: Address list
+    post:
+      summary: Create address
+      responses:
+        '201':
+          description: Address created
+
+  /buyer/addresses/{address}:
+    put:
+      summary: Update address
+      parameters:
+        - in: path
+          name: address
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Address updated
+    delete:
+      summary: Delete address
+      parameters:
+        - in: path
+          name: address
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Address deleted
+
+  /buyer/cart:
+    get:
+      summary: Get current cart
+      responses:
+        '200':
+          description: Cart contents
+
+  /buyer/cart/items:
+    post:
+      summary: Add item to cart
+      responses:
+        '200':
+          description: Item added
+
+  /buyer/cart/items/{cartItemId}:
+    put:
+      summary: Update cart item quantity
+      parameters:
+        - in: path
+          name: cartItemId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Cart updated
+
+  /buyer/cart/clear:
+    post:
+      summary: Clear cart
+      responses:
+        '200':
+          description: Cart cleared
+
+  /buyer/checkout:
+    post:
+      summary: Checkout current cart
+      responses:
+        '200':
+          description: Checkout completed
+
+  /buyer/orders:
+    get:
+      summary: List buyer orders
+      responses:
+        '200':
+          description: Orders list
+
+  /buyer/orders/{order}:
+    get:
+      summary: Get order detail
+      parameters:
+        - in: path
+          name: order
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Order detail
+
+  /driver/jobs:
+    get:
+      summary: List available jobs
+      responses:
+        '200':
+          description: Available delivery jobs
+
+  /driver/jobs/{job}:
+    get:
+      summary: Get job detail
+      parameters:
+        - in: path
+          name: job
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Job detail
+
+  /driver/jobs/{job}/take:
+    post:
+      summary: Take a delivery job
+      parameters:
+        - in: path
+          name: job
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Job taken
+
+  /driver/jobs/{job}/complete:
+    post:
+      summary: Complete a delivery job
+      parameters:
+        - in: path
+          name: job
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Job completed
+
+  /driver/my-jobs:
+    get:
+      summary: List my active/history jobs and earnings
+      responses:
+        '200':
+          description: Driver jobs
+
+  /admin/monitoring:
+    get:
+      summary: Get admin monitoring counters
+      responses:
+        '200':
+          description: Monitoring metrics
+
+  /admin/vouchers:
+    get:
+      summary: List vouchers
+      responses:
+        '200':
+          description: Vouchers list
+    post:
+      summary: Create voucher
+      responses:
+        '201':
+          description: Voucher created
+
+  /admin/vouchers/{voucher}:
+    get:
+      summary: Get voucher detail
+      parameters:
+        - in: path
+          name: voucher
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Voucher detail
+
+  /admin/promos:
+    get:
+      summary: List promos
+      responses:
+        '200':
+          description: Promos list
+    post:
+      summary: Create promo
+      responses:
+        '201':
+          description: Promo created
+
+  /admin/promos/{promo}:
+    get:
+      summary: Get promo detail
+      parameters:
+        - in: path
+          name: promo
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Promo detail
+
+  /admin/time/simulate-next-day:
+    post:
+      summary: Advance simulated time by one day
+      responses:
+        '200':
+          description: Simulated day advanced
+
+  /admin/overdue/run:
+    post:
+      summary: Run overdue auto-refund/return processing
+      responses:
+        '200':
+          description: Overdue check completed
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
